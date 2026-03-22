@@ -142,6 +142,8 @@ async getStatistics(applicationType?: ApplicationType): Promise<ApplicationStati
       reviewerId: application.reviewerId,
       submissions: application.submissions,
       type: application.type,
+      transcriptUrl: application.transcriptUrl,
+      resumeUrl: application.resumeUrl,
       firstName: find("firstName"),
       lastName: find("lastName"),
       email: find("email"),

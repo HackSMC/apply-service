@@ -71,6 +71,14 @@ export class ApplicationResponseDTO {
   @IsOptional()
   @IsString()
   residence?: string;
+
+  @IsString()
+  @IsOptional()
+  transcriptUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  resumeUrl?: string;
 }
 
 export class ApplicationRequestDTO {
@@ -92,7 +100,7 @@ export class ApplicationRequestDTO {
   transcriptUrl?: string;
 
   @IsString()
-    @IsOptional()
+  @IsOptional()
   resumeUrl?: string;
 }
 
