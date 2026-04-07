@@ -63,29 +63,32 @@ export class ApplicationController {
     ],
     {
       limits: {
-        fileSize: 1000000 * 25, // 25MB
+        fileSize: 1000000 * 25,
       },
       fileFilter: (req, file, callback) => {
         const allowedMimes = [
           'application/pdf',
           'application/x-pdf',
-          'application/msword', 
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/acrobat',
+          'applications/vnd.pdf',
+          'application/x-download',
+          'application/download',
+          'text/pdf',
+          'text/x-pdf'
         ];
-
-        const isExtensionValid = file.originalname.match(/\.(pdf|doc|docx)$/i);
-        const isMimeValid = allowedMimes.includes(file.mimetype);
-
-        if (!isMimeValid || !isExtensionValid) {
+        if (
+          !allowedMimes.includes(file.mimetype) ||
+          !file.originalname.match(/\.pdf$/i)
+        ) {
           return callback(
-            new BadRequestException('Only PDF and Word documents (.doc, .docx) are allowed.'),
+            new BadRequestException('Only PDF files are allowed. File details: ' + JSON.stringify(file)),
             false,
           );
         }
         callback(null, true);
       },
     },
-))
+  ))
   @Post(":type")
   @UsePipes(new ValidationPipe({ transform: true }))
   async createApplication(
