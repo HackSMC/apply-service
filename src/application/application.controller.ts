@@ -145,6 +145,9 @@ export class ApplicationController {
       case ApplicationType.JUDGE:
         this.applicationProducerService.publishAcceptedJudgeApplication({...application, user});
         return;
+      case ApplicationType.ORGANIZER:
+        this.applicationProducerService.publishAcceptedOrganizerApplication({...application, user});
+        return;
     }
     return this.applicationService.convertToApplicationResponseDTO(
       application,
@@ -164,6 +167,9 @@ export class ApplicationController {
         return;
       case ApplicationType.JUDGE:
         this.applicationProducerService.publishDeniedJudgeApplication({...application, user});
+        return;
+      case ApplicationType.ORGANIZER:
+        this.applicationProducerService.publishDeniedOrganizerApplication({...application, user});
         return;
     }
 

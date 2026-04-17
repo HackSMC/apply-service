@@ -104,6 +104,36 @@ export class ApplicationProducerService implements OnModuleInit {
     }
   }
 
+  async publishAcceptedOrganizerApplication(application: ApplicationResponseDTO) {
+    const exchange = this.configService.get<string>('APPLICATION_EXCHANGE') || 'application.exchange';
+    const routingKey = 'application.organizer.accept';
+    try {
+      await this.channelWrapper.publish(
+        exchange,
+        routingKey,
+        Buffer.from(JSON.stringify(application)),
+      );
+      this.logger.info({ application }, 'Published application.organizer.accept message');
+    } catch (error) {
+      this.logger.error({ error }, 'Error publishing application.organizer.accept message');
+    }
+  }
+
+  async publishDeniedOrganizerApplication(application: ApplicationResponseDTO) {
+    const exchange = this.configService.get<string>('APPLICATION_EXCHANGE') || 'application.exchange';
+    const routingKey = 'application.organizer.deny';
+    try {
+      await this.channelWrapper.publish(
+        exchange,
+        routingKey,
+        Buffer.from(JSON.stringify(application)),
+      );
+      this.logger.info({ application }, 'Published application.organizer.deny message');
+    } catch (error) {
+      this.logger.error({ error }, 'Error publishing application.organizer.deny message');
+    }
+  }
+
 
 
   // async addCreatedAccountToAccountQueue(responseAccountDTO: AccountDTO) {
