@@ -41,18 +41,18 @@ export class ApplicationController {
   }
 
 
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
-  @Get(":type/stats/")
-  async getStats(@Param("type") type?: string): Promise<ApplicationStatistics> {
-    let applicationType: ApplicationType | undefined;
+  // @UseGuards(SupabaseAuthGuard, RolesGuard)
+  // @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  // @Get(":type/stats/")
+  // async getStats(@Param("type") type?: string): Promise<ApplicationStatistics> {
+  //   let applicationType: ApplicationType | undefined;
     
-    if (type) {
-      applicationType = this.validateApplicationType(type);
-    }
+  //   if (type) {
+  //     applicationType = this.validateApplicationType(type);
+  //   }
     
-    return this.applicationService.getStatistics(applicationType);
-  }
+  //   return this.applicationService.getStatistics(applicationType);
+  // }
 
   @UseGuards(SupabaseAuthGuard, RolesGuard)
   @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
@@ -173,32 +173,32 @@ export class ApplicationController {
     );
   }
 
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
-  @Get(':type/list')
-  async findAllApplicationsByType(
-    @Param('type') type: string,
-    @Query("status") status: Status
-  ): Promise<ApplicationResponseDTO[]> {
-    const applicationType = this.validateApplicationType(type);
+  // @UseGuards(SupabaseAuthGuard, RolesGuard)
+  // @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  // @Get(':type/list')
+  // async findAllApplicationsByType(
+  //   @Param('type') type: string,
+  //   @Query("status") status: Status
+  // ): Promise<ApplicationResponseDTO[]> {
+  //   const applicationType = this.validateApplicationType(type);
     
-    const applications = await this.applicationService.findAll({ status, type: applicationType });
-    const userIds = applications.map(a => a.userId);
-    const users = userIds.length > 0 ? await this.accountService.batchFindById(userIds) : [];
-    const userMap = {};
+  //   const applications = await this.applicationService.findAll({ status, type: applicationType });
+  //   const userIds = applications.map(a => a.userId);
+  //   const users = userIds.length > 0 ? await this.accountService.batchFindById(userIds) : [];
+  //   const userMap = {};
 
-    users.forEach(u => userMap[u.id] = u);
+  //   users.forEach(u => userMap[u.id] = u);
 
-    const applicationResponseDTOs = applications.map(a => {
-      return this.applicationService.convertToApplicationResponseDTO(
-        a,
-        userMap[a.userId],
-        false
-      );
-    });
+  //   const applicationResponseDTOs = applications.map(a => {
+  //     return this.applicationService.convertToApplicationResponseDTO(
+  //       a,
+  //       userMap[a.userId],
+  //       false
+  //     );
+  //   });
 
-    return applicationResponseDTOs;
-  }
+  //   return applicationResponseDTOs;
+  // }
 
   @UseGuards(SupabaseAuthGuard, RolesGuard)
   @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
@@ -229,46 +229,46 @@ export class ApplicationController {
     };
   }
 
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
-  @Get('user/:id')
-  async findApplicationByUserId(
-    @Param('id') id: string,
-    @Req() req: AuthRequest
-  ): Promise<ApplicationResponseDTO> {
-    const currentUser = req.user;
+  // @UseGuards(SupabaseAuthGuard, RolesGuard)
+  // @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  // @Get('user/:id')
+  // async findApplicationByUserId(
+  //   @Param('id') id: string,
+  //   @Req() req: AuthRequest
+  // ): Promise<ApplicationResponseDTO> {
+  //   const currentUser = req.user;
 
-    const hasPermission = containsRole(currentUser.user_roles, [AccountRoles.ADMIN, AccountRoles.ORGANIZER]);
-    const isTheSameUser = id === currentUser.sub;
+  //   const hasPermission = containsRole(currentUser.user_roles, [AccountRoles.ADMIN, AccountRoles.ORGANIZER]);
+  //   const isTheSameUser = id === currentUser.sub;
 
-    if (!isTheSameUser && !hasPermission) {
-        throw new Error('no');
-    }
+  //   if (!isTheSameUser && !hasPermission) {
+  //       throw new Error('no');
+  //   }
 
-    const application = await this.applicationService.findByUserId(id);
-    const user = await this.accountService.findById(id);
-    const defaultApplication: Application = new Application()
-    defaultApplication.id = 'NO APPLICATION'
+  //   const application = await this.applicationService.findByUserId(id);
+  //   const user = await this.accountService.findById(id);
+  //   const defaultApplication: Application = new Application()
+  //   defaultApplication.id = 'NO APPLICATION'
 
-    return this.applicationService.convertToApplicationResponseDTO(
-      application && application.id ? application : defaultApplication,
-      user
-    );
-  }
+  //   return this.applicationService.convertToApplicationResponseDTO(
+  //     application && application.id ? application : defaultApplication,
+  //     user
+  //   );
+  // }
 
-  @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
-  @Get(':id')
-  async find(@Param('id', new ParseUUIDPipe()) id: string): Promise<ApplicationResponseDTO> {
-    const application = await this.applicationService.findById(id);
-    const user = await this.accountService.findById(application.userId);
-    application.resumeUrl = application.resumeUrl ? await this.minioService.generatePresignedURL(application.resumeUrl) : '';
-    application.transcriptUrl = application.transcriptUrl ? await this.minioService.generatePresignedURL(application.transcriptUrl) : '';
-    return this.applicationService.convertToApplicationResponseDTO(
-      application,
-      user
-    );
-  }
+  // @UseGuards(SupabaseAuthGuard, RolesGuard)
+  // @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  // @Get(':id')
+  // async find(@Param('id', new ParseUUIDPipe()) id: string): Promise<ApplicationResponseDTO> {
+  //   const application = await this.applicationService.findById(id);
+  //   const user = await this.accountService.findById(application.userId);
+  //   application.resumeUrl = application.resumeUrl ? await this.minioService.generatePresignedURL(application.resumeUrl) : '';
+  //   application.transcriptUrl = application.transcriptUrl ? await this.minioService.generatePresignedURL(application.transcriptUrl) : '';
+  //   return this.applicationService.convertToApplicationResponseDTO(
+  //     application,
+  //     user
+  //   );
+  // }
 
   @UseGuards(SupabaseAuthGuard, RolesGuard)
   @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
